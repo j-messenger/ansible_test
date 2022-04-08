@@ -12,3 +12,6 @@
 192.168.220.136
 
 [file_servers]
+
+[workstations]
+192.168.220.136
