@@ -18,6 +18,31 @@
       update_cache: yes
     when: ansible_distribution in ["Ubuntu", "Debian"]
 
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create user sysadmin
+    tags: always
+    user:
+      name: sysadmin
+      groups: root
+
+  - name: add ssh key for sysadmin
+    tags: always
+    authorized_key:
+      user: sysadmin
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILeSVsEkjUBls5cGUn1vPmPKRLqw35y6AOZNyMMb2ala ansible2"
+
+  - name: add sudoers file for sysadmin
+    tags: always
+    copy:
+      src: sudoer_sysadmin
+      dest: /etc/sudoers.d/sysadmin
+      owner: root
+      group: root
+      mode: 0440
+
 - hosts: workstations
   become: true
   tasks:
@@ -66,7 +91,7 @@
 
   - name: change email
     tags: apache,httpd,centos
-    linefile:
+    lineinfile:
       path: /etc/httpd/conf/httpd.conf
       regexp: '^ServerAdmin'
       line: ServerAdmin somebody@somewhere.net
